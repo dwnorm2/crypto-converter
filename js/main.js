@@ -55,7 +55,6 @@ async function convert() {
   ethPrice = await searchETH();
   convertedNumber = (amount * btcPrice) / ethPrice;
   updateUI(convertedNumber.toFixed(convertedNumber > 1 ? 2 : 4));
-  // Now btcPrice and ethPrice will have the actual values
 }
 
 convert();
