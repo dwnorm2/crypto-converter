@@ -3,7 +3,7 @@
 Crypto Converter is a web app that converts a given amount of cryptocurrency 
 to the equivalent amount of a different cryptocurrency.
 
-**Link to project:** ![Crypto Converter](https://jcruzcode.github.io/crypto-converter/)
+**Link to project:** [Crypto Converter](https://jcruzcode.github.io/crypto-converter/)
 
 ## How It's Made:
 
