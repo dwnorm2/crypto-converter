@@ -22,7 +22,7 @@ let coins = [
 ];
 
 /* Loop through array of selectors (above) for coins and add an event listener
-   for the 'keypress' action which updates the letiables storing coin names. */
+   for the 'keypress' action which updates the variables storing coin names. */
 for (let i = 0; i < coins.length; i++) {
   coins[i].addEventListener("keypress", function (event) {
     if (event.key === "Enter") {
@@ -34,7 +34,7 @@ for (let i = 0; i < coins.length; i++) {
 
 // TODO: Start class definition
 
-// TODO: letiables will be properties and part of constructor function
+// TODO: variables will be properties and part of constructor function
 // Amount of crypto to be converted
 let amount = 0;
 let coin1 = "",
@@ -111,8 +111,7 @@ function updateUI(convertedNumber) {
   // ).src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
 }
 
-//get asset data
-
+// getAssets fetches all coin data from API and passes it to populateDropdowns
 function getAssets() {
   fetch(`https://api.coincap.io/v2/assets`)
     .then((red) => red.json())
@@ -124,16 +123,22 @@ function getAssets() {
     });
 }
 
-// Dropdown functionality
+// initliazeDropdown enables dynamic hiding/showing of options
+// according to input value after dropdown options are populated
 function initializeDropdown(dropdown) {
   let input = dropdown.querySelector("input");
   let content = dropdown.querySelector(".dropdown-content");
   let options = content.querySelectorAll("a");
 
+  //on input, hide options that don't contain input value
   input.addEventListener("input", function () {
     let searchValue = input.value.toUpperCase();
     options.forEach(function (option) {
-      let optionValue = option.getAttribute("data-value").toUpperCase();
+      //optionValue grabs the textcontent and the data-value (ticker),
+      // enabling user to search by crypto name or ticker
+      let optionValue =
+        option.textContent.toUpperCase() +
+        option.getAttribute("data-value").toUpperCase();
       if (optionValue.indexOf(searchValue) > -1) {
         option.style.display = "";
       } else {
@@ -142,16 +147,19 @@ function initializeDropdown(dropdown) {
     });
   });
 
+  //if user clicks input, show dropdown
   input.addEventListener("click", function () {
     content.style.display = "block";
   });
 
+  // if user clicks outside of dropdown, hide dropdown
   document.addEventListener("click", function (event) {
     if (!dropdown.contains(event.target)) {
       content.style.display = "none";
     }
   });
 
+  // when user clicks an option, assign the data-value to the input value
   options.forEach(function (option) {
     option.addEventListener("click", function () {
       input.value = option.getAttribute("data-value");
@@ -160,7 +168,8 @@ function initializeDropdown(dropdown) {
   });
 }
 
-// Populate dropdowns
+// populateDropdowns adds an option to the dropdown menus for each
+// asset fetched in getAssets
 function populateDropdowns(data) {
   let dropdowns = document.querySelectorAll(".dropdown");
   dropdowns.forEach(function (dropdown) {
@@ -170,10 +179,9 @@ function populateDropdowns(data) {
       let option = document.createElement("a");
       option.href = "#";
       option.dataset.value = data[i].symbol;
-      option.textContent = data[i].symbol;
+      option.textContent = `${data[i].name} (${data[i].symbol})`;
       content.appendChild(option);
     }
-
     initializeDropdown(dropdown);
   });
 }
@@ -181,3 +189,4 @@ function populateDropdowns(data) {
 getAssets();
 
 // TODO: Enable swapping coin1 with coin2
+// TODO: Error message when convert is pressed and < 2 cryptos are selected
