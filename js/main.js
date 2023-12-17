@@ -127,7 +127,7 @@ function getAssets() {
 // according to input value after dropdown options are populated
 function initializeDropdown(dropdown) {
   let input = dropdown.querySelector("input");
-  let content = dropdown.querySelector(".dropdown-content");
+  let content = dropdown.querySelector(".dropdownContent");
   let options = content.querySelectorAll("a");
 
   //on input, hide options that don't contain input value
@@ -173,11 +173,12 @@ function initializeDropdown(dropdown) {
 function populateDropdowns(data) {
   let dropdowns = document.querySelectorAll(".dropdown");
   dropdowns.forEach(function (dropdown) {
-    let content = dropdown.querySelector(".dropdown-content");
+    let content = dropdown.querySelector(".dropdownContent");
 
     for (let i = 0; i < data.length; i++) {
       let option = document.createElement("a");
       option.href = "#";
+      //create new data attribute that holds the ticker
       option.dataset.value = data[i].symbol;
       option.textContent = `${data[i].name} (${data[i].symbol})`;
       content.appendChild(option);
