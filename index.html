@@ -18,18 +18,29 @@
 	<h2>From</h2>
 
 	<h3>Amount</h3>
-	<input id="amount"type="number" value="">
+	<input id="amount" type="number" value="1">
 	<button>Convert</button>
 
 	<h3>Coin 1</h3>
-	<input id="currency1" type="text" value="">
+	<div class="dropdown">
+		<input id="currency1" type="text" placeholder="Select cryptocurrency">
+		<div class="dropdownContent" id="currency1Dropdown">
+
+		</div>
+	</div>
 
 	<h2>to</h2>
 
 	<h3>Coin 2</h3>
-	<input id="currency2" type="text" value="">
+	<div class="dropdown">
+		<input id="currency2" type="text" placeholder="Select cryptocurrency">
+		<div class="dropdownContent" id="currency2Dropdown">
+
+		</div>
+	</div>
 
 	<span id="conversionMessage"></span>
+
 
 
 	<script type="text/javascript" src="js/main.js"></script>

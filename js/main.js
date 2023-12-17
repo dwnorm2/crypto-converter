@@ -16,12 +16,14 @@ input.addEventListener("keypress", function (event) {
 });
 
 // Array of selectors for input fields of coins 1 and 2
-let coins = [ document.querySelector('#currency1'), 
-              document.querySelector('#currency2') ];
+let coins = [
+  document.querySelector("#currency1"),
+  document.querySelector("#currency2"),
+];
 
 /* Loop through array of selectors (above) for coins and add an event listener
    for the 'keypress' action which updates the variables storing coin names. */
-for ( let i = 0; i < coins.length; i++ ) {
+for (let i = 0; i < coins.length; i++) {
   coins[i].addEventListener("keypress", function (event) {
     if (event.key === "Enter") {
       changeCoins();
@@ -32,10 +34,12 @@ for ( let i = 0; i < coins.length; i++ ) {
 
 // TODO: Start class definition
 
-// TODO: Variables will be properties and part of constructor function
+// TODO: variables will be properties and part of constructor function
 // Amount of crypto to be converted
 let amount = 0;
-let coin1 = '', coin2 ='', tickers = [];
+let coin1 = "",
+  coin2 = "",
+  tickers = [];
 
 let coinPrice1 = 0;
 let coinPrice2 = 0;
@@ -66,12 +70,14 @@ function changeCoins() {
 async function searchCoin(coin) {
   try {
     let name = coin.toLowerCase();
-    if ( name.includes(' ') ) name = name.split(' ').join('-');
+    if (name.includes(" ")) name = name.split(" ").join("-");
 
-    const response = await fetch(`https://api.coincap.io/v2/assets?search=${name}`);
+    const response = await fetch(
+      `https://api.coincap.io/v2/assets?search=${name}`
+    );
     const data = await response.json();
     if (data.data) {
-      if ( coin !== '' ) tickers.push(data.data[0].symbol);
+      if (coin !== "") tickers.push(data.data[0].symbol);
       return data.data[0].priceUsd;
     }
   } catch (err) {
@@ -84,17 +90,19 @@ async function searchCoin(coin) {
 async function convert() {
   coinPrice1 = await searchCoin(coin1);
   coinPrice2 = await searchCoin(coin2);
-  convertedNumber = (amount * coinPrice1) / coinPrice2; // exchange rate 
+  convertedNumber = (amount * coinPrice1) / coinPrice2; // exchange rate
   updateUI(convertedNumber.toFixed(convertedNumber > 1 ? 2 : 4));
 }
 
 /*  updateUI provides an updated display of the conversion rate between the
     two coins provided */
 function updateUI(convertedNumber) {
-  if ( tickers.length !== 0 ) {
-  document.getElementById("conversionMessage").textContent = `${amount} ${tickers[0].toUpperCase()} = ${
-    convertedNumber > 0 ? convertedNumber : 0
-  } ${tickers[1].toUpperCase()}`;
+  if (tickers.length !== 0) {
+    document.getElementById(
+      "conversionMessage"
+    ).textContent = `${amount} ${tickers[0].toUpperCase()} = ${
+      convertedNumber > 0 ? convertedNumber : 0
+    } ${tickers[1].toUpperCase()}`;
   }
 
   // let ticker = data.symbol;
@@ -102,3 +110,84 @@ function updateUI(convertedNumber) {
   //   "logo"
   // ).src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
 }
+
+// getAssets fetches all coin data from API and passes it to populateDropdowns
+function getAssets() {
+  fetch(`https://api.coincap.io/v2/assets`)
+    .then((red) => red.json())
+    .then((data) => {
+      populateDropdowns(data.data);
+    })
+    .catch((err) => {
+      console.log(`error ${err}`);
+    });
+}
+
+// initliazeDropdown enables dynamic hiding/showing of options
+// according to input value after dropdown options are populated
+function initializeDropdown(dropdown) {
+  let input = dropdown.querySelector("input");
+  let content = dropdown.querySelector(".dropdownContent");
+  let options = content.querySelectorAll("a");
+
+  //on input, hide options that don't contain input value
+  input.addEventListener("input", function () {
+    let searchValue = input.value.toUpperCase();
+    options.forEach(function (option) {
+      //optionValue grabs the textcontent and the data-value (ticker),
+      // enabling user to search by crypto name or ticker
+      let optionValue =
+        option.textContent.toUpperCase() +
+        option.getAttribute("data-value").toUpperCase();
+      if (optionValue.indexOf(searchValue) > -1) {
+        option.style.display = "";
+      } else {
+        option.style.display = "none";
+      }
+    });
+  });
+
+  //if user clicks input, show dropdown
+  input.addEventListener("click", function () {
+    content.style.display = "block";
+  });
+
+  // if user clicks outside of dropdown, hide dropdown
+  document.addEventListener("click", function (event) {
+    if (!dropdown.contains(event.target)) {
+      content.style.display = "none";
+    }
+  });
+
+  // when user clicks an option, assign the data-value to the input value
+  options.forEach(function (option) {
+    option.addEventListener("click", function () {
+      input.value = option.getAttribute("data-value");
+      content.style.display = "none";
+    });
+  });
+}
+
+// populateDropdowns adds an option to the dropdown menus for each
+// asset fetched in getAssets
+function populateDropdowns(data) {
+  let dropdowns = document.querySelectorAll(".dropdown");
+  dropdowns.forEach(function (dropdown) {
+    let content = dropdown.querySelector(".dropdownContent");
+
+    for (let i = 0; i < data.length; i++) {
+      let option = document.createElement("a");
+      option.href = "#";
+      //create new data attribute that holds the ticker
+      option.dataset.value = data[i].symbol;
+      option.textContent = `${data[i].name} (${data[i].symbol})`;
+      content.appendChild(option);
+    }
+    initializeDropdown(dropdown);
+  });
+}
+
+getAssets();
+
+// TODO: Enable swapping coin1 with coin2
+// TODO: Error message when convert is pressed and < 2 cryptos are selected
