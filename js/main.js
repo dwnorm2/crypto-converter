@@ -205,7 +205,7 @@ for (let coin of coins) {
   });
 }
 
-// Searches API for inputted coin, and updates logo source when coin is found
+// updateCoinImage searches API for inputted coin, and updates logo source when coin is found
 async function updateCoinImage(coinName, inputField) {
   try {
     let name = coinName.toLowerCase();
