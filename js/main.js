@@ -128,7 +128,7 @@ function getAssets() {
 function initializeDropdown(dropdown) {
   let input = dropdown.querySelector("input");
   let content = dropdown.querySelector(".dropdownContent");
-  let options = content.querySelectorAll("a");
+  let options = content.querySelectorAll(".optionContainer");
 
   //on input, hide options that don't contain input value
   input.addEventListener("input", function () {
@@ -176,12 +176,19 @@ function populateDropdowns(data) {
     let content = dropdown.querySelector(".dropdownContent");
 
     for (let i = 0; i < data.length; i++) {
+      let logo = document.createElement("img");
+      let ticker = data[i].symbol;
+      logo.src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
       let option = document.createElement("a");
       option.href = "#";
+      option.textContent = `${data[i].name} (${ticker})`;
+      let optionContainer = document.createElement("div");
+      optionContainer.classList.add("optionContainer");
+      content.appendChild(optionContainer);
+      optionContainer.appendChild(logo);
+      optionContainer.appendChild(option);
       //create new data attribute that holds the ticker
-      option.dataset.value = data[i].symbol;
-      option.textContent = `${data[i].name} (${data[i].symbol})`;
-      content.appendChild(option);
+      optionContainer.dataset.value = ticker;
     }
     initializeDropdown(dropdown);
   });
