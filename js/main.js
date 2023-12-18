@@ -1,13 +1,13 @@
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
-  is clicked or when the user presses enter.
+  is clicked or when user presses enter.
 */
 document.querySelector("button").addEventListener("click", changeAmount);
 
 let input = document.querySelector("#amount"); // Amount of coin 1 to convert
 
 input.addEventListener("keypress", function (event) {
-  // If the user presses the "Enter" key on the keyboard
+  // If user presses the "Enter" key on the keyboard
   if (event.key === "Enter") {
     changeAmount();
     // Cancel the default action, if needed
@@ -136,7 +136,7 @@ function initializeDropdown(dropdown) {
     let searchValue = input.value.toUpperCase();
     options.forEach(function (option) {
       // optionValue grabs the textcontent and the data-value (ticker),
-      // enabling the user to search by crypto name or ticker
+      // enabling user to search by crypto name or ticker
       let optionValue =
         option.textContent.toUpperCase() +
         option.getAttribute("data-value").toUpperCase();
@@ -148,19 +148,19 @@ function initializeDropdown(dropdown) {
     });
   });
 
-  // if the user clicks input, show dropdown
+  // if user clicks input, show dropdown
   input.addEventListener("click", function () {
     content.style.display = "block";
   });
 
-  // if the user clicks outside of dropdown, hide dropdown
+  // if user clicks outside of dropdown, hide dropdown
   document.addEventListener("click", function (event) {
     if (!dropdown.contains(event.target)) {
       content.style.display = "none";
     }
   });
 
-  // when the user clicks an option, assign the data-value to the input value
+  // when user clicks an option, assign the data-value to the input value
   options.forEach(function (option) {
     option.addEventListener("click", function () {
       input.value = option.getAttribute("data-value");
