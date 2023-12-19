@@ -128,14 +128,15 @@ function getAssets() {
 function initializeDropdown(dropdown) {
   let input = dropdown.querySelector("input");
   let content = dropdown.querySelector(".dropdownContent");
-  let options = content.querySelectorAll("a");
+  let options = content.querySelectorAll(".optionContainer");
+  let logoContainer = dropdown.querySelector(".inputContainer img");
 
-  //on input, hide options that don't contain input value
+  // on input, hide options that don't contain input value
   input.addEventListener("input", function () {
     let searchValue = input.value.toUpperCase();
     options.forEach(function (option) {
-      //optionValue grabs the textcontent and the data-value (ticker),
-      // enabling user to search by crypto name or ticker
+      // optionValue grabs the textcontent and the data-value (ticker),
+      // enabling the user to search by crypto name or ticker
       let optionValue =
         option.textContent.toUpperCase() +
         option.getAttribute("data-value").toUpperCase();
@@ -147,44 +148,82 @@ function initializeDropdown(dropdown) {
     });
   });
 
-  //if user clicks input, show dropdown
+  // if the user clicks input, show dropdown
   input.addEventListener("click", function () {
     content.style.display = "block";
   });
 
-  // if user clicks outside of dropdown, hide dropdown
+  // if the user clicks outside of dropdown, hide dropdown
   document.addEventListener("click", function (event) {
     if (!dropdown.contains(event.target)) {
       content.style.display = "none";
     }
   });
 
-  // when user clicks an option, assign the data-value to the input value
+  // when the user clicks an option, assign the data-value to the input value
   options.forEach(function (option) {
     option.addEventListener("click", function () {
       input.value = option.getAttribute("data-value");
       content.style.display = "none";
+
+      // Update the image source in the input container
+      let ticker = option.getAttribute("data-value");
+      logoContainer.src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
     });
   });
 }
 
-// populateDropdowns adds an option to the dropdown menus for each
+// populateDropdowns adds an option/logo to the dropdown menus for each
 // asset fetched in getAssets
 function populateDropdowns(data) {
   let dropdowns = document.querySelectorAll(".dropdown");
   dropdowns.forEach(function (dropdown) {
     let content = dropdown.querySelector(".dropdownContent");
-
     for (let i = 0; i < data.length; i++) {
+      let logo = document.createElement("img");
+      let ticker = data[i].symbol;
+      logo.src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
       let option = document.createElement("a");
       option.href = "#";
+      option.textContent = `${data[i].name} (${ticker})`;
+      let optionContainer = document.createElement("div");
+      optionContainer.classList.add("optionContainer");
+      content.appendChild(optionContainer);
+      optionContainer.appendChild(logo);
+      optionContainer.appendChild(option);
       //create new data attribute that holds the ticker
-      option.dataset.value = data[i].symbol;
-      option.textContent = `${data[i].name} (${data[i].symbol})`;
-      content.appendChild(option);
+      optionContainer.dataset.value = ticker;
     }
     initializeDropdown(dropdown);
   });
+}
+
+// Add an event listener that runs updateCoinImage as the user inputs coin name
+for (let coin of coins) {
+  coin.addEventListener("input", function (event) {
+    updateCoinImage(coin.value, coin);
+  });
+}
+
+// updateCoinImage searches API for inputted coin, and updates logo source when coin is found
+async function updateCoinImage(coinName, inputField) {
+  try {
+    let name = coinName.toLowerCase();
+    if (name.includes(" ")) name = name.split(" ").join("-");
+
+    const response = await fetch(
+      `https://api.coincap.io/v2/assets?search=${name}`
+    );
+    const data = await response.json();
+    if (data.data) {
+      const ticker = data.data[0].symbol;
+      const logoSrc = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
+      inputField.closest(".dropdown").querySelector(".inputContainer img").src =
+        logoSrc;
+    }
+  } catch (err) {
+    console.error(`Error: ${err}`);
+  }
 }
 
 getAssets();
