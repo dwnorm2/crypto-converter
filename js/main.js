@@ -2,10 +2,8 @@ class Converter {
   constructor() {
     // Properties
     this.amount = 0;
-    this.coin1 = "",
-    this.coin2 = "",
-    this.tickers = [];
-  
+    (this.coin1 = ""), (this.coin2 = ""), (this.tickers = []);
+
     this.coinPrice1 = 0;
     this.coinPrice2 = 0;
     this.convertedNumber = 0;
@@ -58,16 +56,18 @@ class Converter {
     this.coinPrice1 = await this.searchCoin(this.coin1);
     this.coinPrice2 = await this.searchCoin(this.coin2);
     this.convertedNumber = (this.amount * this.coinPrice1) / this.coinPrice2; // exchange rate
-    this.updateUI(this.convertedNumber.toFixed(this.convertedNumber > 1 ? 2 : 4));
+    this.updateUI(
+      this.convertedNumber.toFixed(this.convertedNumber > 1 ? 2 : 4)
+    );
   }
 
   /*  updateUI provides an updated display of the conversion rate between the
       two coins provided */
   updateUI(convertedNumber) {
     if (this.tickers.length !== 0) {
-      document.getElementById(
-        "conversionMessage"
-      ).textContent = `${this.amount} ${this.tickers[0].toUpperCase()} = ${
+      document.getElementById("conversionMessage").textContent = `${
+        this.amount
+      } ${this.tickers[0].toUpperCase()} = ${
         convertedNumber > 0 ? convertedNumber : 0
       } ${this.tickers[1].toUpperCase()}`;
     }
@@ -91,7 +91,7 @@ class Converter {
     let input = dropdown.querySelector("input");
     let content = dropdown.querySelector(".dropdownContent");
     let options = content.querySelectorAll(".optionContainer");
-    let logoContainer = dropdown.querySelector(".inputContainer img");
+    let logoContainer = dropdown.querySelector(".inputContainer input");
 
     // on input, hide options that don't contain input value
     input.addEventListener("input", function () {
@@ -130,7 +130,7 @@ class Converter {
 
         // Update the image source in the input container
         let ticker = option.getAttribute("data-value");
-        logoContainer.src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
+        logoContainer.style.backgroundImage = `url(https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png)`;
       });
     });
   }
@@ -141,7 +141,7 @@ class Converter {
     let dropdowns = document.querySelectorAll(".dropdown");
     // Save a reference to the class instance
     let self = this;
-  
+
     dropdowns.forEach(function (dropdown) {
       let content = dropdown.querySelector(".dropdownContent");
       for (let i = 0; i < data.length; i++) {
@@ -160,10 +160,9 @@ class Converter {
         optionContainer.dataset.value = ticker;
       }
       // Use arrow function to maintain the context of 'this'
-      dropdowns.forEach(dropdown => self.initializeDropdown(dropdown));
+      dropdowns.forEach((dropdown) => self.initializeDropdown(dropdown));
     });
   }
-  
 
   // updateCoinImage searches API for inputted coin, and updates logo source when coin is found
   async updateCoinImage(coinName, inputField) {
@@ -178,8 +177,11 @@ class Converter {
       if (data.data) {
         const ticker = data.data[0].symbol;
         const logoSrc = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
-        inputField.closest(".dropdown").querySelector(".inputContainer img").src =
-          logoSrc;
+        inputField
+          .closest(".dropdown")
+          .querySelector(
+            ".inputContainer input"
+          ).style.backgroundImage = `url(${logoSrc})`;
       }
     } catch (err) {
       console.error(`Error: ${err}`);
@@ -194,7 +196,9 @@ const crypto = new Converter();
   The event listeners perform crypto amount conversions when the Convert button 
   is clicked or when the user presses enter.
 */
-document.querySelector("button").addEventListener("click", () => crypto.changeAmount());
+document
+  .querySelector("button")
+  .addEventListener("click", () => crypto.changeAmount());
 
 let input = document.querySelector("#amount"); // Amount of coin 1 to convert
 
