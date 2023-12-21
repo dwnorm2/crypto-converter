@@ -10,8 +10,20 @@
 /******************************************
 /* LAYOUT
 /*******************************************/
+html {
+  font-size: 62.5%;
+  width: 100vw;
+  height: 100vh;
+}
 
 body {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  row-gap: 1%;
+  align-items: center;
+  font-size: 1.5rem;
+  height: inherit;
   padding: 20px;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -76,6 +88,11 @@ img {
   padding: 5px;
 }
 
+/* Button styles */
+
+button {
+  margin-top: 1%;
+}
 /******************************************
 /* ADDITIONAL STYLES
 /*******************************************/
