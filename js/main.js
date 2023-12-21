@@ -188,7 +188,8 @@ class Converter {
     }
   }
 
-  /* swapCoins */
+  /*  swapCoins get the value and background image URL from each input and 
+      swaps them */
   swapCoins() {
     const coinOne = document.querySelector("#currency1").value;
     const coinTwo = document.querySelector("#currency2").value;
