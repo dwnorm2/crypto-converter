@@ -187,6 +187,21 @@ class Converter {
       console.error(`Error: ${err}`);
     }
   }
+
+  /*  swapCoins get the value and background image URL from each input and 
+      swaps them */
+  swapCoins() {
+    const coinOne = document.querySelector("#currency1").value;
+    const coinTwo = document.querySelector("#currency2").value;
+    const urlOne = document.querySelector("#currency1").style.backgroundImage;
+    const urlTwo = document.querySelector("#currency2").style.backgroundImage;
+
+    document.querySelector("#currency1").value = coinTwo;
+    document.querySelector("#currency1").style.backgroundImage = urlTwo;
+
+    document.querySelector("#currency2").value = coinOne;
+    document.querySelector("#currency2").style.backgroundImage = urlOne;
+  }
 }
 
 // Create instance of Converter class
@@ -237,5 +252,9 @@ for (let coin of coins) {
 
 crypto.getAssets();
 
+// Event listener for Swap button will run swapCoins() on click
+document
+  .querySelector("#swap")
+  .addEventListener("click", () => crypto.swapCoins());
 // TODO: Enable swapping coin1 with coin2
 // TODO: Error message when convert is pressed and < 2 cryptos are selected
