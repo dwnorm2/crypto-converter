@@ -209,11 +209,15 @@ const crypto = new Converter();
 
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
-  is clicked or when the user presses enter.
+  is clicked, amount value is changed, or when the user presses enter.
 */
 document
   .querySelector("button")
   .addEventListener("click", () => crypto.changeAmount());
+
+document
+  .getElementById("amount")
+  .addEventListener("input", () => crypto.changeAmount());
 
 let input = document.querySelector("#amount"); // Amount of coin 1 to convert
 
@@ -252,9 +256,10 @@ for (let coin of coins) {
 
 crypto.getAssets();
 
-// Event listener for Swap button will run swapCoins() on click
-document
-  .querySelector("#swap")
-  .addEventListener("click", () => crypto.swapCoins());
-// TODO: Enable swapping coin1 with coin2
+// Event listener for Swap button will run swapCoins() and changeAmount() on click
+document.querySelector("#swap").addEventListener("click", function () {
+  crypto.swapCoins();
+  crypto.changeAmount();
+});
+
 // TODO: Error message when convert is pressed and < 2 cryptos are selected
