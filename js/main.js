@@ -257,12 +257,9 @@ for (let coin of coins) {
 crypto.getAssets();
 
 // Event listener for Swap button will run swapCoins() and changeAmount() on click
-document
-  .querySelector("#swap")
-  .addEventListener("click", () => crypto.swapCoins());
-
-document
-  .getElementById("swap")
-  .addEventListener("click", () => crypto.changeAmount());
+document.querySelector("#swap").addEventListener("click", function () {
+  crypto.swapCoins();
+  crypto.changeAmount();
+});
 
 // TODO: Error message when convert is pressed and < 2 cryptos are selected
