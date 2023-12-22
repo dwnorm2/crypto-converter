@@ -209,11 +209,15 @@ const crypto = new Converter();
 
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
-  is clicked or when the user presses enter.
+  is clicked, amount value is changed, or when the user presses enter.
 */
 document
   .querySelector("button")
   .addEventListener("click", () => crypto.changeAmount());
+
+document
+  .getElementById("amount")
+  .addEventListener("input", () => crypto.changeAmount());
 
 let input = document.querySelector("#amount"); // Amount of coin 1 to convert
 
