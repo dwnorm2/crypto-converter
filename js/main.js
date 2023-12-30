@@ -7,6 +7,21 @@ class Converter {
     this.coinPrice1 = 0;
     this.coinPrice2 = 0;
     this.convertedNumber = 0;
+
+    // Harcoded fiat currencies
+    this.fiats = [
+      'united-states-dollar',
+      'euro',
+      'japanese-yen',
+      'british-pound-sterling',
+      'canadian-dollar',
+      'australian-dollar',
+      'chinese-yuan-renminbi'
+    ];
+    this.fiat = []; // For data from rates endpoint
+    this.coins = []; // For data from assets endpoint
+    this.data = []; // For both coin and fiat data
+    this.prices = {}; // For fiat prices in USD
   }
 
   // Class Methods
@@ -33,6 +48,14 @@ class Converter {
       then fetches info from the CoinCap API. The function stores the ticker 
       symbol and returns the current coin price in USD */
   async searchCoin(coin) {
+    let fiatSymbols = Object.keys(this.prices);
+
+    // Check fiatSymbols to see if coin is fiat
+    if ( fiatSymbols.includes(coin) ) {
+      this.tickers.push(coin);
+      return this.prices[coin];
+    }
+
     try {
       let name = coin.toLowerCase();
       if (name.includes(" ")) name = name.split(" ").join("-");
@@ -73,12 +96,43 @@ class Converter {
     }
   }
 
-  // getAssets fetches all coin data from API and passes it to populateDropdowns
+  /* getFiat is an asynchronous function retrieves fiat data from the rates
+     endpoint and uses the data to populate the dropdown menus  */
+  async getFiat() {
+    let fiats = [];
+
+    for ( let fiat of this.fiats ) {
+      try {
+        const res = await fetch(`https://api.coincap.io/v2/rates/${fiat}`)
+        const data = await res.json();
+        fiats.push(data.data);
+      } catch {
+        console.error(`Error: ${err}`);
+      }
+    }
+
+    this.fiat = Array.from(fiats);
+
+    // Assign fiat symbol as keys and rate USD as values 
+    // to this.prices object
+    for ( let x of this.fiat ) {
+      this.prices[x.symbol] = x.rateUsd;
+    }
+
+    // Combine coin and fiat data
+    this.data = this.coins.concat(this.fiat);
+
+    this.populateDropdowns(this.data);
+    
+  }
+
+  // getAssets gets all coin data from assets endpoint and passes it to getFiat
   getAssets() {
     fetch(`https://api.coincap.io/v2/assets`)
       .then((red) => red.json())
       .then((data) => {
-        this.populateDropdowns(data.data);
+        this.coins = Array.from(data.data);
+        this.getFiat();
       })
       .catch((err) => {
         console.log(`error ${err}`);
@@ -130,6 +184,8 @@ class Converter {
 
         // Update the image source in the input container
         let ticker = option.getAttribute("data-value");
+        // Fix to get dollar image to display for AUD and CAD
+        if ( ticker === 'AUD' || ticker === 'CAD') ticker = 'USD';
         logoContainer.style.backgroundImage = `url(https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png)`;
       });
     });
@@ -146,16 +202,46 @@ class Converter {
       let content = dropdown.querySelector(".dropdownContent");
       for (let i = 0; i < data.length; i++) {
         let logo = document.createElement("img");
+        
         let ticker = data[i].symbol;
-        logo.src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
+
+        if ( ticker === 'AUD' || ticker === 'CAD') {
+          // Fix to get dollar image to show up for AUD and CAD in dropdown menu
+          logo.src = `https://assets.coincap.io/assets/icons/usd@2x.png`;
+        } else if ( ticker === 'IOTA' ) {
+          // Fix - IOTA image provided since it's not included in the 'icon' search
+          logo.src = `img/iota.png`;
+        } else {
+          logo.src = `https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png`;
+        }
+
         let option = document.createElement("a");
         option.href = "#";
-        option.textContent = `${data[i].name} (${ticker})`;
+
+        // Format fiat names so they're space separated and capitalized
+        if ( data[i].type ) {
+          let words = data[i].id.split('-'), word, name;
+          
+          for ( let i = 0; i < words.length; i++ ) {
+            word = words[i].split('');
+            word[0] = word[0].toUpperCase();
+            word = word.join('');
+
+            words[i] = word;
+          }
+          
+          name = words.join(' ');
+          option.textContent = `${name} (${ticker})`;
+        } else {
+          option.textContent = `${data[i].name} (${ticker})`;
+        }
+        
         let optionContainer = document.createElement("div");
         optionContainer.classList.add("optionContainer");
         content.appendChild(optionContainer);
         optionContainer.appendChild(logo);
         optionContainer.appendChild(option);
+        
         //create new data attribute that holds the ticker
         optionContainer.dataset.value = ticker;
       }
@@ -209,15 +295,11 @@ const crypto = new Converter();
 
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
-  is clicked, amount value is changed, or when the user presses enter.
+  is clicked or when the user presses enter.
 */
 document
-  .querySelector("button")
+  .querySelector("#convert")
   .addEventListener("click", () => crypto.changeAmount());
-
-document
-  .getElementById("amount")
-  .addEventListener("input", () => crypto.changeAmount());
 
 let input = document.querySelector("#amount"); // Amount of coin 1 to convert
 
@@ -256,10 +338,9 @@ for (let coin of coins) {
 
 crypto.getAssets();
 
-// Event listener for Swap button will run swapCoins() and changeAmount() on click
-document.querySelector("#swap").addEventListener("click", function () {
-  crypto.swapCoins();
-  crypto.changeAmount();
-});
+// Event listener for Swap button will run swapCoins() on click
+document
+  .querySelector("#swap")
+  .addEventListener("click", () => crypto.swapCoins());
 
 // TODO: Error message when convert is pressed and < 2 cryptos are selected
