@@ -10,13 +10,13 @@ class Converter {
 
     // Harcoded fiat currencies
     this.fiats = [
-      'united-states-dollar',
-      'euro',
-      'japanese-yen',
-      'british-pound-sterling',
-      'canadian-dollar',
-      'australian-dollar',
-      'chinese-yuan-renminbi'
+      "united-states-dollar",
+      "euro",
+      "japanese-yen",
+      "british-pound-sterling",
+      "canadian-dollar",
+      "australian-dollar",
+      "chinese-yuan-renminbi",
     ];
     this.fiat = []; // For data from rates endpoint
     this.coins = []; // For data from assets endpoint
@@ -51,7 +51,7 @@ class Converter {
     let fiatSymbols = Object.keys(this.prices);
 
     // Check fiatSymbols to see if coin is fiat
-    if ( fiatSymbols.includes(coin) ) {
+    if (fiatSymbols.includes(coin)) {
       this.tickers.push(coin);
       return this.prices[coin];
     }
@@ -98,32 +98,32 @@ class Converter {
 
   /* getFiat is an asynchronous function retrieves fiat data from the rates
      endpoint and uses the data to populate the dropdown menus  */
-  async getFiat() {
-    let fiats = [];
+  getFiat() {
+    const fiats = [];
+    const requests = this.fiats.map((currency) =>
+      fetch(`https://api.coincap.io/v2/rates/${currency}`)
+    );
 
-    for ( let fiat of this.fiats ) {
-      try {
-        const res = await fetch(`https://api.coincap.io/v2/rates/${fiat}`)
-        const data = await res.json();
-        fiats.push(data.data);
-      } catch {
-        console.error(`Error: ${err}`);
-      }
-    }
+    Promise.all(requests)
+      .then( responses => Promise.all( responses.map( res => res.json() ) ) )
+      .then( data =>  {
+        for ( let fiat of data ) {
+          this.fiat.push(fiat.data);
+        }
+        
+        // Assign fiat symbol as keys and rate USD as values
+        // to this.prices object
+        for (let x of this.fiat) {
+          this.prices[x.symbol] = x.rateUsd;
+        }
+      
+        // Combine coin and fiat data
+        this.data = this.coins.concat(this.fiat);
 
-    this.fiat = Array.from(fiats);
+        this.populateDropdowns(this.data);
+       } )
+      .catch( err => console.log(`An error has occurred with function getFiat: ${err}`) );
 
-    // Assign fiat symbol as keys and rate USD as values 
-    // to this.prices object
-    for ( let x of this.fiat ) {
-      this.prices[x.symbol] = x.rateUsd;
-    }
-
-    // Combine coin and fiat data
-    this.data = this.coins.concat(this.fiat);
-
-    this.populateDropdowns(this.data);
-    
   }
 
   // getAssets gets all coin data from assets endpoint and passes it to getFiat
@@ -185,7 +185,7 @@ class Converter {
         // Update the image source in the input container
         let ticker = option.getAttribute("data-value");
         // Fix to get dollar image to display for AUD and CAD
-        if ( ticker === 'AUD' || ticker === 'CAD') ticker = 'USD';
+        if (ticker === "AUD" || ticker === "CAD") ticker = "USD";
         logoContainer.style.backgroundImage = `url(https://assets.coincap.io/assets/icons/${ticker.toLowerCase()}@2x.png)`;
       });
     });
@@ -202,13 +202,15 @@ class Converter {
       let content = dropdown.querySelector(".dropdownContent");
       for (let i = 0; i < data.length; i++) {
         let logo = document.createElement("img");
-        
-        let ticker = data[i].symbol;
 
-        if ( ticker === 'AUD' || ticker === 'CAD') {
+        let ticker = data[i].symbol;
+        //console.log('index: ', i);
+        //console.log(data[i].id);
+        //console.log(ticker);
+        if (ticker === "AUD" || ticker === "CAD") {
           // Fix to get dollar image to show up for AUD and CAD in dropdown menu
           logo.src = `https://assets.coincap.io/assets/icons/usd@2x.png`;
-        } else if ( ticker === 'IOTA' ) {
+        } else if (ticker === "IOTA") {
           // Fix - IOTA image provided since it's not included in the 'icon' search
           logo.src = `img/iota.png`;
         } else {
@@ -219,29 +221,31 @@ class Converter {
         option.href = "#";
 
         // Format fiat names so they're space separated and capitalized
-        if ( data[i].type ) {
-          let words = data[i].id.split('-'), word, name;
-          
-          for ( let i = 0; i < words.length; i++ ) {
-            word = words[i].split('');
+        if (data[i].type) {
+          let words = data[i].id.split("-"),
+            word,
+            name;
+
+          for (let i = 0; i < words.length; i++) {
+            word = words[i].split("");
             word[0] = word[0].toUpperCase();
-            word = word.join('');
+            word = word.join("");
 
             words[i] = word;
           }
-          
-          name = words.join(' ');
+
+          name = words.join(" ");
           option.textContent = `${name} (${ticker})`;
         } else {
           option.textContent = `${data[i].name} (${ticker})`;
         }
-        
+
         let optionContainer = document.createElement("div");
         optionContainer.classList.add("optionContainer");
         content.appendChild(optionContainer);
         optionContainer.appendChild(logo);
         optionContainer.appendChild(option);
-        
+
         //create new data attribute that holds the ticker
         optionContainer.dataset.value = ticker;
       }
