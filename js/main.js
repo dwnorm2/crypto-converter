@@ -105,25 +105,26 @@ class Converter {
     );
 
     Promise.all(requests)
-      .then( responses => Promise.all( responses.map( res => res.json() ) ) )
-      .then( data =>  {
-        for ( let fiat of data ) {
+      .then((responses) => Promise.all(responses.map((res) => res.json())))
+      .then((data) => {
+        for (let fiat of data) {
           this.fiat.push(fiat.data);
         }
-        
+
         // Assign fiat symbol as keys and rate USD as values
         // to this.prices object
         for (let x of this.fiat) {
           this.prices[x.symbol] = x.rateUsd;
         }
-      
+
         // Combine coin and fiat data
         this.data = this.coins.concat(this.fiat);
 
         this.populateDropdowns(this.data);
-       } )
-      .catch( err => console.log(`An error has occurred with function getFiat: ${err}`) );
-
+      })
+      .catch((err) =>
+        console.log(`An error has occurred with function getFiat: ${err}`)
+      );
   }
 
   // getAssets gets all coin data from assets endpoint and passes it to getFiat
