@@ -344,8 +344,9 @@ for (let coin of coins) {
 crypto.getAssets();
 
 // Event listener for Swap button will run swapCoins() on click
-document
-  .querySelector("#swap")
-  .addEventListener("click", () => crypto.swapCoins());
+document.querySelector("#swap").addEventListener("click", function () {
+  crypto.swapCoins();
+  crypto.changeAmount();
+});
 
 // TODO: Error message when convert is pressed and < 2 cryptos are selected
