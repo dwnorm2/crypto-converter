@@ -204,9 +204,7 @@ class Converter {
         let logo = document.createElement("img");
 
         let ticker = data[i].symbol;
-        //console.log('index: ', i);
-        //console.log(data[i].id);
-        //console.log(ticker);
+
         if (ticker === "AUD" || ticker === "CAD") {
           // Fix to get dollar image to show up for AUD and CAD in dropdown menu
           logo.src = `https://assets.coincap.io/assets/icons/usd@2x.png`;
