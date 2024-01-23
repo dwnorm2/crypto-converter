@@ -295,8 +295,24 @@ class Converter {
   /* darkMode will toggle dark styles on if not present and turn off dark styles
      if already on */
   darkMode() {
-    const body = document.querySelector('body');
-    body.classList.toggle('dark');
+    const body = document.querySelector("body");
+    const inputs = document.querySelectorAll(
+      "input, .inputContainer input, .dropdownContent, .optionContainer"
+    );
+    const dropdownInputs = document.querySelectorAll(".inputContainer input");
+    const optionLinks = document.querySelectorAll(".optionContainer a");
+    const hoverStyles = document.querySelectorAll(
+      ".dropdownContent .optionContainer"
+    );
+
+    body.classList.toggle("dark");
+
+    inputs.forEach((input) => input.classList.toggle("inputDark"));
+    dropdownInputs.forEach((input) =>
+      input.classList.toggle("dropdownInputDark")
+    );
+    optionLinks.forEach((link) => link.classList.toggle("aDark"));
+    hoverStyles.forEach((style) => style.classList.toggle("hoverDark"));
   }
 }
 
@@ -304,7 +320,9 @@ class Converter {
 const crypto = new Converter();
 
 // Listen for a click on the cloud logo and toggle dark mode on/off
-document.querySelector('#cloud').addEventListener('click', () => crypto.darkMode());
+document
+  .querySelector("#cloud")
+  .addEventListener("click", () => crypto.darkMode());
 
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
