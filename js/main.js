@@ -205,9 +205,7 @@ class Converter {
         let logo = document.createElement("img");
 
         let ticker = data[i].symbol;
-        //console.log('index: ', i);
-        //console.log(data[i].id);
-        //console.log(ticker);
+
         if (ticker === "AUD" || ticker === "CAD") {
           // Fix to get dollar image to show up for AUD and CAD in dropdown menu
           logo.src = `https://assets.coincap.io/assets/icons/usd@2x.png`;
@@ -293,10 +291,20 @@ class Converter {
     document.querySelector("#currency2").value = coinOne;
     document.querySelector("#currency2").style.backgroundImage = urlOne;
   }
+
+  /* darkMode will toggle dark styles on if not present and turn off dark styles
+     if already on */
+  darkMode() {
+    const body = document.querySelector('body');
+    body.classList.toggle('dark');
+  }
 }
 
 // Create instance of Converter class
 const crypto = new Converter();
+
+// Listen for a click on the cloud logo and toggle dark mode on/off
+document.querySelector('#cloud').addEventListener('click', () => crypto.darkMode());
 
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
