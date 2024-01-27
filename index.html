@@ -3,7 +3,8 @@
 
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+	<!-- Allow user to zoom -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 	<meta name="description" content="A simple crypto converter">
 	<meta name="keywords" content="one, two, three">
 
@@ -20,8 +21,8 @@
 		<img id="cloud" src="./img/cloudLogo-removebg-preview.png" alt="">
 		<h1>CoinCloud Price Converter</h1>
 	</header>
-
-	<input id="amount" type="number" value="1">
+	<!-- No negative inputs allowed -->
+	<input id="amount" type="number" value="1" min="0">
 	<button id="convert">Convert</button>
 
 

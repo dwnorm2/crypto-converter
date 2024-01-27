@@ -32,8 +32,14 @@ class Converter {
   */
   changeAmount() {
     this.amount = Number(document.querySelector("#amount").value);
-    this.changeCoins();
-    this.convert();
+
+    if(this.amount < 0) {
+      // Display error message to user if they enter a negative number
+      document.querySelector('#conversionMessage').innerText = `Invalid input: Negative numbers not allowed.`
+    } else {
+      this.changeCoins();
+      this.convert();
+    }
   }
 
   /*  changeCoins resets tickers to an empty array and updates the names of 
