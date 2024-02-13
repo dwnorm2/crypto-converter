@@ -33,9 +33,11 @@ class Converter {
   changeAmount() {
     this.amount = Number(document.querySelector("#amount").value);
 
-    if(this.amount < 0) {
+    if (this.amount < 0) {
       // Display error message to user if they enter a negative number
-      document.querySelector('#conversionMessage').innerText = `Invalid input: Negative numbers not allowed.`
+      document.querySelector(
+        "#conversionMessage"
+      ).innerText = `Invalid input: Negative numbers not allowed.`;
     } else {
       this.changeCoins();
       this.convert();
@@ -85,9 +87,24 @@ class Converter {
     this.coinPrice1 = await this.searchCoin(this.coin1);
     this.coinPrice2 = await this.searchCoin(this.coin2);
     this.convertedNumber = (this.amount * this.coinPrice1) / this.coinPrice2; // exchange rate
-    this.updateUI(
-      this.convertedNumber.toFixed(this.convertedNumber > 1 ? 2 : 4)
-    );
+
+    if (this.convertedNumber < 1) {
+      // for amounts less than 1
+      this.updateUI(this.convertedNumber.toFixed(10));
+    } else if (this.convertedNumber < 1000) {
+      // for amounts that don't require commas
+      this.updateUI(this.convertedNumber.toFixed(2));
+    } else {
+      /*
+      This regex uses positive lookahead to find every digit that is followed by
+      groups of three digits before a decimal point. 
+      
+      It then replaces those digits with the digit followed by a comma.
+      */
+      this.updateUI(
+        this.convertedNumber.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")
+      );
+    }
   }
 
   /*  updateUI provides an updated display of the conversion rate between the
@@ -97,7 +114,10 @@ class Converter {
       document.getElementById("conversionMessage").textContent = `${
         this.amount
       } ${this.tickers[0].toUpperCase()} = ${
-        convertedNumber > 0 ? convertedNumber : 0
+        // Checks for numbers already formatted with commas
+        convertedNumber > 0 || convertedNumber.includes(",")
+          ? convertedNumber
+          : 0
       } ${this.tickers[1].toUpperCase()}`;
     }
   }
