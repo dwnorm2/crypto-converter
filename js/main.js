@@ -350,6 +350,13 @@ document
   .querySelector("#cloud")
   .addEventListener("click", () => crypto.darkMode());
 
+// toggle dark mode based on user system settings
+const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+if (isDarkMode) {
+  crypto.darkMode();
+}
+
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
   is clicked or when the user presses enter.
