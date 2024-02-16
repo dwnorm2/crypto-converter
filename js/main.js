@@ -318,9 +318,15 @@ class Converter {
     document.querySelector("#currency2").style.backgroundImage = urlOne;
   }
 
-  /* darkMode will toggle dark styles on if not present and turn off dark styles
-     if already on */
+  /* darkMode will toggle dark styles on body*/
   darkMode() {
+    const body = document.querySelector("body");
+
+    body.classList.toggle("dark");
+  }
+
+  /* darkDropdowns will toggle dark styles on dropdown elements if body contains the "dark" class*/
+  darkDropdowns() {
     const body = document.querySelector("body");
     const inputs = document.querySelectorAll(
       "input, .inputContainer input, .dropdownContent, .optionContainer"
@@ -331,14 +337,21 @@ class Converter {
       ".dropdownContent .optionContainer"
     );
 
-    body.classList.toggle("dark");
-
-    inputs.forEach((input) => input.classList.toggle("inputDark"));
-    dropdownInputs.forEach((input) =>
-      input.classList.toggle("dropdownInputDark")
-    );
-    optionLinks.forEach((link) => link.classList.toggle("aDark"));
-    hoverStyles.forEach((style) => style.classList.toggle("hoverDark"));
+    if (body.classList.contains("dark")) {
+      inputs.forEach((input) => input.classList.add("inputDark"));
+      dropdownInputs.forEach((input) =>
+        input.classList.add("dropdownInputDark")
+      );
+      optionLinks.forEach((link) => link.classList.add("aDark"));
+      hoverStyles.forEach((style) => style.classList.add("hoverDark"));
+    } else {
+      inputs.forEach((input) => input.classList.remove("inputDark"));
+      dropdownInputs.forEach((input) =>
+        input.classList.remove("dropdownInputDark")
+      );
+      optionLinks.forEach((link) => link.classList.remove("aDark"));
+      hoverStyles.forEach((style) => style.classList.remove("hoverDark"));
+    }
   }
 }
 
@@ -346,16 +359,25 @@ class Converter {
 const crypto = new Converter();
 
 // Listen for a click on the cloud logo and toggle dark mode on/off
-document
-  .querySelector("#cloud")
-  .addEventListener("click", () => crypto.darkMode());
+document.querySelector("#cloud").addEventListener("click", function () {
+  crypto.darkMode();
+  crypto.darkDropdowns();
+});
 
 // toggle dark mode based on user system settings
 const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 if (isDarkMode) {
   crypto.darkMode();
+  crypto.darkDropdowns();
 }
+
+// run darkDropdowns when dropdowns are clicked. This fixes a bug where the dropdowns would try to darken before the elements are fully loaded
+document.querySelectorAll(".dropdown").forEach((dropdown) => {
+  dropdown.addEventListener("click", () => {
+    crypto.darkDropdowns();
+  });
+});
 
 /* 
   The event listeners perform crypto amount conversions when the Convert button 
