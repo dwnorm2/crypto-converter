@@ -8,7 +8,7 @@ CoinCloud Price Converter is a web app that converts a given amount of cryptocur
 
 **Tech used:** HTML, CSS, JavaScript, CoinCap API
 
-Asset data (name/price/logo) is pulled from the CoinCap API (https://docs.coincap.io/). The prices for two selected assets are then converted based on the value in the amount field.
+Asset data (name/price/logo) is pulled from the [CoinCap API](https://docs.coincap.io/). The prices for two selected assets are then converted based on the value in the amount field.
 
 Features include:
 * Auto-populating dropdowns based on market-cap
