@@ -1,25 +1,23 @@
-# Crypto Converter
+# CoinCloud Price Converter
 
-Crypto Converter is a web app that converts a given amount of cryptocurrency 
-to the equivalent amount of a different cryptocurrency.
+CoinCloud Price Converter is a web app that converts a given amount of cryptocurrency to the equivalent amount of a different cryptocurrency.
 
-**Link to project:** [Crypto Converter](https://jcruzcode.github.io/crypto-converter/)
+**Live:** [Crypto Converter](https://dwnorm2.github.io/crypto-converter/)
 
 ## How It's Made:
 
-**Tech used:** HTML, CSS, JavaScript, CoinCap API, Framework of choice
+**Tech used:** HTML, CSS, JavaScript, CoinCap API
 
-Here's where you can go to town on how you actually built this thing. Write as much as you can here, it's totally fine if it's not too much just make sure you write *something*. If you don't have too much experience on your resume working on the front end that's totally fine. This is where you can really show off your passion and make up for that ten fold.
+Asset data (name/price/logo) is pulled from the [CoinCap API](https://docs.coincap.io/). The prices for two selected assets are then converted based on the value in the amount field.
 
-## Optimizations
-*(optional)*
-
-You don't have to include this section but interviewers *love* that you can not only deliver a final product that looks great but also functions efficiently. Did you write something then refactor it later and the result was 5x faster than the original implementation? Did you cache your assets? Things that you write in this section are **GREAT** to bring up in interviews and you can use this section as reference when studying for technical interviews!
+Features include:
+* Auto-populating dropdowns based on market-cap
+* Swap button
+* Auto dark mode
 
 ## Lessons Learned:
 
-No matter what your experience level, being an engineer means continuously learning. Every time you build something you always have those *whoa this is awesome* or *wow I actually did it!* moments. This is where you should share those moments! Recruiters and interviewers love to see that you're self-aware and passionate about growing.
+A major takeaway from this project was the timing of code executions. Optimizations include async/await, as well as triggering certain css styles after DOM content is fully loaded.
 
-## Examples:
-Take a look at these couple examples that I have in my own portfolio:
-...
+## More Projects:
+[CoinCloud](https://github.com/dwnorm2/coincloud)
