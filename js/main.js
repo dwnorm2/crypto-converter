@@ -69,12 +69,19 @@ class Converter {
       if (name.includes(" ")) name = name.split(" ").join("-");
 
       const response = await fetch(
-        `https://api.coincap.io/v2/assets?search=${name}`
+        `https://rest.coincap.io/v3/assets/${name}`,
+        {
+          headers: {
+            Authorization: `Bearer 73a828abcf14d386c1dcbe6a2146164e44773501136411c1060c8f3e6a3324e7`,
+          },
+        }
       );
       const data = await response.json();
       if (data.data) {
-        if (coin !== "") this.tickers.push(data.data[0].symbol);
-        return data.data[0].priceUsd;
+        if (coin !== "") this.tickers.push(data.data.symbol);
+        return data.data.priceUsd;
+      } else {
+        console.error(`Asset not found: ${coin}`);
       }
     } catch (err) {
       console.error(`Error: ${err}`);
@@ -125,9 +132,12 @@ class Converter {
   /* getFiat is an asynchronous function retrieves fiat data from the rates
      endpoint and uses the data to populate the dropdown menus  */
   getFiat() {
-    const fiats = [];
     const requests = this.fiats.map((currency) =>
-      fetch(`https://api.coincap.io/v2/rates/${currency}`)
+      fetch(`https://rest.coincap.io/v3/rates/${currency}`, {
+        headers: {
+          Authorization: `Bearer 73a828abcf14d386c1dcbe6a2146164e44773501136411c1060c8f3e6a3324e7`,
+        },
+      })
     );
 
     Promise.all(requests)
@@ -155,7 +165,11 @@ class Converter {
 
   // getAssets gets all coin data from assets endpoint and passes it to getFiat
   getAssets() {
-    fetch(`https://api.coincap.io/v2/assets`)
+    fetch(`https://rest.coincap.io/v3/assets`, {
+      headers: {
+        Authorization: `Bearer 73a828abcf14d386c1dcbe6a2146164e44773501136411c1060c8f3e6a3324e7`,
+      },
+    })
       .then((red) => red.json())
       .then((data) => {
         this.coins = Array.from(data.data);
@@ -203,10 +217,10 @@ class Converter {
       }
     });
 
-    // when the user clicks an option, assign the data-value to the input value
+    // when the user clicks an option, assign the slug to the input value
     options.forEach(function (option) {
       option.addEventListener("click", function () {
-        input.value = option.getAttribute("data-value");
+        input.value = option.getAttribute("data-slug"); // Use slug instead of ticker
         content.style.display = "none";
 
         // Update the image source in the input container
@@ -231,6 +245,7 @@ class Converter {
         let logo = document.createElement("img");
 
         let ticker = data[i].symbol;
+        let slug = data[i].id; // Get the slug (e.g., 'bitcoin' for BTC)
 
         if (ticker === "AUD" || ticker === "CAD") {
           // Fix to get dollar image to show up for AUD and CAD in dropdown menu
@@ -271,8 +286,9 @@ class Converter {
         optionContainer.appendChild(logo);
         optionContainer.appendChild(option);
 
-        //create new data attribute that holds the ticker
-        optionContainer.dataset.value = ticker;
+        // Create new data attributes for the ticker and slug
+        optionContainer.dataset.value = ticker; // Ticker symbol
+        optionContainer.dataset.slug = slug; // Slug
       }
       // Use arrow function to maintain the context of 'this'
       dropdowns.forEach((dropdown) => self.initializeDropdown(dropdown));
@@ -286,7 +302,12 @@ class Converter {
       if (name.includes(" ")) name = name.split(" ").join("-");
 
       const response = await fetch(
-        `https://api.coincap.io/v2/assets?search=${name}`
+        `https://rest.coincap.io/v3/assets/${name}`,
+        {
+          headers: {
+            Authorization: `Bearer 73a828abcf14d386c1dcbe6a2146164e44773501136411c1060c8f3e6a3324e7`,
+          },
+        }
       );
       const data = await response.json();
       if (data.data) {
